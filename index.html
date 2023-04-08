@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!doctype html>
+      <html lang="en">
+      <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+      <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossOrigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+        <style type="text/css">
+        .btn-xl {
+          padding: 10px 20px;
+          margin: 30px 40px;
+          font-size: 20px;
+          border-radius: 10px;
+        }
+        #myChart {
+          visibility: hidden;
+        }
+
+        #result-info{
+          visibility:hidden;
+        }
+
+        #b1 {
+          padding: 20px 40px;
+          margin: 40px 50px;
+          font-size: 30px;
+          border-radius: 20px;
+
+        }
+
+      </style>
+
+        <title>4 Second Assignment</title>
+</head>
+<body>
+
+
+<div class="container">
+  <br>
+  <h1>4 Second Assignment</h1>
+  <br>
+  <div class="row">
+    <div>
+      <button id = "b1" class="btn-xl">Start</button>
+      <br>
+    </div>
+  </div>
+
+  <div class="row">
+    <br>
+    <p>Click the button, then try to click it again in 4 seconds exactly!</p>
+    <br>
+  </div>
+
+  <div class="row">
+    <p id="result">Your Result is:</p>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <button id="b2" class="btn-xl">View Results</button>
+    </div>
+    <div class="col-6">
+      <button id="b3" class="btn-xl">Hide Results</button>
+    </div>
+  </div>
+
+</div>
+
+
+  <div class="container chart-container" style="position: relative; height:40vh; width:80vw">
+    <canvas id="myChart"></canvas>
+  </div>
+
+<div class="container" id="result-info">
+  <p id="attempts">Total attempts: </p>
+  <p id="min">Min: </p>
+  <p id="max">Max: </p>
+  <p id="avg">Average: </p>
+</div>
+
+  <script>
+    const fourseconds = 4000;
+    let ms = 0
+    let totaldata = [];
+    let count = 0;
+    let numClicked = 0;
+    let totaltime=0;
+
+    $(document).ready(function(){
+      alert("welcome");
+    });
+    $("#b1").click(function(){
+      if (count%2 ==0) {
+        $("#b1").text("Stop");
+        let d = new Date();
+        ms = d.getTime();
+        $("#b1").css("background-color", "lightgray");
+      }
+      else {
+        $("#b1").text("Start");
+        let d2 = new Date();
+        let ms2 = d2.getTime();
+        let timeBetween = ms2-ms;
+        totaltime=totaltime+(timeBetween/1000);
+        totaldata.push(timeBetween/1000);
+        totaldata.sort();
+        numClicked++;
+        //updating data
+        $("#result").text("Your Result is " + timeBetween/1000 + " seconds");
+        $("#attempts").text("Total attempts: " + numClicked );
+        $("#min").text("Min: " + totaldata[0]);
+        $("#max").text("Max: " + totaldata[numClicked-1] );
+        $("#avg").text("Average: " + totaltime/numClicked );
+
+
+        addData(myNewChart, numClicked, timeBetween/1000);
+
+
+        if(timeBetween==fourseconds){
+          $("#b1").css("background-color", "green");
+        }
+        else if((timeBetween>fourseconds & timeBetween<4200) || (timeBetween<fourseconds & timeBetween>3800)){
+          $("#b1").css("background-color", "blue");
+        }
+        else if((timeBetween>fourseconds & timeBetween<4500) || (timeBetween<fourseconds & timeBetween>3500)){
+          $("#b1").css("background-color", "yellow");
+        }
+        else{
+          $("#b1").css("background-color", "red");
+        }
+      }
+
+      count++;
+
+    });
+
+
+    //creating our chart
+    const ctx = document.getElementById('myChart');
+
+
+    const data = {
+      labels: [0],
+      datasets: [{
+        label: 'Results',
+        data: [0],
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }]
+    };
+    const config = {
+      type: 'line',
+      data: data,
+    };
+
+    const myNewChart = new Chart(ctx, {
+      type: 'line',
+      data: data,
+      options: {
+        events: ['click'],
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: 'Seconds'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Attempt Number'
+            }
+          }
+        }
+      }
+    });
+    function addData(chart, label, data) {
+      chart.data.labels.push(label);
+      chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+      });
+      chart.update();
+    }
+
+
+  // adding functionality to the view results button
+    $("#b2").click(function() {
+      document.getElementById('myChart').style.visibility = 'visible'
+      document.getElementById('result-info').style.visibility = 'visible'
+    });
+    $("#b3").click(function() {
+      document.getElementById('myChart').style.visibility = 'hidden'
+      document.getElementById('result-info').style.visibility = 'hidden'
+    });
+
+  </script>
+
+
+
+</body>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+
+
+
+
+</html>
