@@ -67,12 +67,9 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
+
       <button id="b2" class="btn-xl">View Results</button>
-    </div>
-    <div class="col-6">
-      <button id="b3" class="btn-xl">Hide Results</button>
-    </div>
+
   </div>
 
 </div>
@@ -193,14 +190,20 @@
     }
 
 
+  count2=1
   // adding functionality to the view results button
     $("#b2").click(function() {
-      document.getElementById('myChart').style.visibility = 'visible'
-      document.getElementById('result-info').style.visibility = 'visible'
-    });
-    $("#b3").click(function() {
-      document.getElementById('myChart').style.visibility = 'hidden'
-      document.getElementById('result-info').style.visibility = 'hidden'
+      if (count2%2!=0) {
+        document.getElementById('myChart').style.visibility = 'visible';
+        document.getElementById('result-info').style.visibility = 'visible';
+        $("#b2").text("Hide Results");
+      }
+      else if (count2%2==0){
+        document.getElementById('myChart').style.visibility = 'hidden';
+        document.getElementById('result-info').style.visibility = 'hidden';
+        $("#b2").text("View Results");
+      }
+    count2++;
     });
 
   </script>
